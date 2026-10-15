@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROOT SHADOW TOOLS</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:16px;background:#05070a;color:#e6f7ed;font-family:Consolas,monospace}
+header{text-align:center;padding:24px 10px;background:#0a110e;border-bottom:1px solid #1b4934}
+.logo{font-size:25px;font-weight:bold;color:#39ff91;letter-spacing:2px}
+.tag{font-size:11px;color:#789087;margin-top:8px;letter-spacing:3px}
+.wrap{max-width:850px;margin:auto;padding:16px 0}
+.card{background:#0c1219;border:1px solid #1b4934;border-radius:10px;padding:18px;margin-bottom:16px}
+h2{font-size:14px;color:#39ff91;margin:0 0 15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+button,input{width:100%;padding:13px;border-radius:6px;font:inherit;font-size:13px}
+button{color:#39ff91;background:#0b1a13;border:1px solid #23563b;cursor:pointer;text-align:left}
+button:hover,button.active{background:#123522;border-color:#39ff91}
+input{background:#06090d;border:1px solid #284737;color:white;outline:none}
+label{display:block;color:#789087;font-size:12px;margin-bottom:8px}
+.searchbtn{text-align:center;margin-top:12px}
+.terminal{background:#030507;border:1px solid #234432;border-radius:8px;overflow:hidden}
+.termhead{padding:11px 14px;background:#0d1712;color:#39ff91;font-size:11px}
+#output{min-height:150px;max-height:400px;overflow:auto;padding:16px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.9;color:#a8f7c5}
+.hidden{display:none!important}
+footer{text-align:center;color:#53665b;font-size:10px;padding:18px}
+@media(max-width:450px){.grid{grid-template-columns:1fr}.logo{font-size:21px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">ROOT SHADOW</div>
+  <div class="tag">TOOLS / SEARCH TERMINAL</div>
+</header>
+
+<main class="wrap">
+  <section class="card" id="login">
+    <h2>ACCESS CONTROL</h2>
+    <label for="access">ACCESS CODE</label>
+    <input id="access" type="password" placeholder="Enter access code">
+    <button class="searchbtn" onclick="unlock()">UNLOCK PANEL</button>
+    <p id="error" style="color:#ff7777;font-size:12px"></p>
+  </section>
+
+  <div id="dashboard" class="hidden">
+    <section class="card">
+      <h2>SEARCH FUNCTIONS</h2>
+      <div class="grid">
+        <button data-platform="Snapchat" onclick="choose(this)">◈ SNAP SEARCH</button>
+        <button data-platform="TikTok" onclick="choose(this)">◈ TIKTOK SEARCH</button>
+        <button data-platform="Instagram" onclick="choose(this)">◈ INSTA SEARCH</button>
+        <button data-platform="Telegram" onclick="choose(this)">◈ TELEGRAM SEARCH</button>
+        <button data-platform="PlayStation" onclick="choose(this)">◈ PSN SEARCH</button>
+        <button data-platform="IP Lookup" onclick="choose(this)">◈ IP LOOKUP</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>QUERY CONFIGURATION</h2>
+      <label id="queryLabel" for="query">USERNAME / PSEUDO</label>
+      <input id="query" placeholder="Select a function first">
+      <button class="searchbtn" onclick="runSearch()">EXECUTE SEARCH</button>
+    </section>
+
+    <section class="card">
+      <h2>OUTPUT CONSOLE</h2>
+      <div class="terminal">
+        <div class="termhead" id="termTitle">SEARCH TERMINAL</div>
+        <div id="output">Select a function to begin.</div>
+      </div>
+    </section>
+    <button onclick="logout()">LOCK SESSION</button>
+  </div>
+</main>
+<footer>ROOT SHADOW TOOLS · SEARCH TERMINAL</footer>
+
+<script>
+let selectedPlatform = "";
+
+function unlock(){
+  if(document.getElementById("access").value === "212-213-214"){
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    log("Access granted.\nSearch terminal initialized.");
+  }else{
+    document.getElementById("error").textContent = "ACCESS DENIED";
+  }
+}
+
+function choose(button){
+  selectedPlatform = button.dataset.platform;
+  document.querySelectorAll("[data-platform]").forEach(b=>{
+    b.classList.toggle("active",b===button);
+  });
+  document.getElementById("termTitle").textContent =
+    selectedPlatform.toUpperCase() + " / SEARCH TERMINAL";
+  document.getElementById("queryLabel").textContent =
+    selectedPlatform === "IP Lookup" ? "IP ADDRESS" : "USERNAME / PSEUDO";
+  document.getElementById("query").placeholder =
+    selectedPlatform === "IP Lookup" ? "Enter an IP address" : "Enter a username";
+  log("Function selected: " + selectedPlatform);
+}
+
+function log(text){
+  // Affiche le contenu directement, sans lignes décoratives ajoutées.
+  document.getElementById("output").textContent = text;
+}
+
+function randomHex(length){
+  const chars = "0123456789abcdef";
+  let out = "";
+  for(let i=0;i<length;i++){
+    out += chars[Math.floor(Math.random()*chars.length)];
+  }
+  return out;
+}
+
+function runSearch(){
+  const query = document.getElementById("query").value.trim().replace(/^@/,"");
+  if(!selectedPlatform){
+    log("ERROR: Select a search function first.");
+    return;
+  }
+  if(!query){
+    log("ERROR: Enter a query.");
+    return;
+  }
+
+  if(selectedPlatform === "IP Lookup"){
+    log("IP Lookup\nAddress : " + query +
+        "\nNo external IP information retrieved.");
+    return;
+  }
+
+  const result = [
+    "Plateforme : " + selectedPlatform,
+    "Pseudo     : @" + query,
+    "ID         : " + randomHex(12).toUpperCase(),
+    "HASH       : " + randomHex(64),
+    "SESSION    : " + randomHex(24),
+    "Pays       : France"
+  ].join("\n");
+
+  log(result);
+}
+
+function logout(){
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("login").classList.remove("hidden");
+  document.getElementById("access").value = "";
+  document.getElementById("query").value = "";
+  document.getElementById("error").textContent = "";
+  selectedPlatform = "";
+}
+</script>
+</body>
+</html>
